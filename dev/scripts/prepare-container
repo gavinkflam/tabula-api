@@ -1,0 +1,56 @@
+#!/bin/bash
+set -e
+
+function main() {
+  local uid="$1"
+  local uname="$2"
+  local gid="$3"
+  local gname="$4"
+  local home="$5"
+
+  # Install sudo package
+  if [[ ! $( apk info --installed sudo ) ]]; then
+    apk --update --no-cache add sudo
+    rm -rf /var/cache/apk/*
+  fi
+
+  # Create home directory for user if not exist
+  if [[ -d "${home}" ]]; then
+    echo -e "Home directory ${home} exists"
+  else
+    echo -e "Creating home directory ${home}"
+
+    # Create home directory for the user
+    mkdir -p ${home}
+  fi
+
+  # Create user if not exist
+  if [[ "$(id "${uname}" > /dev/null 2>&1; echo "$?")" == "0" ]]; then
+    echo -e "User ${uname} exists"
+  else
+    echo -e "Creating group ${gname} and user ${uname}"
+
+    # Create group
+    addgroup -g ${gid} ${gname}
+
+    # Create user and configure the home directory and default shell
+    adduser -D \
+        -s /bin/bash \
+        -G ${gname} \
+        -u ${uid} \
+        -h ${home} \
+        ${uname}
+
+    # Add user to sudoer in order to sudo without entering password
+    echo "${uname} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/${uname}
+  fi
+
+  # Change ownership for user home and project directory
+  echo -e 'Changing ownership for directories'
+  chown -R ${uid}:${gid} ${home} /usr/src/app
+
+  echo -e 'Container preparation completed!'
+  return 0
+}
+
+main "$@"

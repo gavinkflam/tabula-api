@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+function main() {
+  local cmd="${@:2}"
+  local options=''
+
+  # Add tty and interactive option if the fd is a tty
+  if [[ -t 1 ]]; then
+    local size=($(stty size | tr -d '\0'))
+    options="-ti -e COLUMNS=${size[1]} -e LINES=${size[0]}"
+  fi
+
+  # Execute interactive command within container
+  docker exec \
+      -u "$( id -u ):$( id -g )" ${options} \
+      "tabula-api-dev_${1}_1" \
+      sh -c "${cmd}"
+}
+
+main "$@"
