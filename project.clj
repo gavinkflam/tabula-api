@@ -6,8 +6,10 @@
             :key "mit"
             :year 2018}
   :dependencies [[org.clojure/clojure "1.9.0"]
+                 [commons-cli/commons-cli "1.4"]
                  [io.pedestal/pedestal.service "0.5.3"]
                  [io.pedestal/pedestal.jetty "0.5.3"]
-                 [org.slf4j/slf4j-simple "1.7.25"]]
+                 [org.slf4j/slf4j-simple "1.7.25"]
+                 [technology.tabula/tabula "1.0.2"]]
   :profiles {:dev {:dependencies [[io.pedestal/pedestal.service-tools "0.5.3"]]}}
   :main hk.gavin.tabula-api.server)
