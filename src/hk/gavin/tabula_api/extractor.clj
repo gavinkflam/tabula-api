@@ -43,7 +43,7 @@
   The arguments will be parsed against the options definition from tabula-java."
   [option-map]
   (let [parser (DefaultParser.)
-        build-options (. CommandLineApp buildOptions)
+        build-options (CommandLineApp/buildOptions)
         args (-> option-map option-map->string-list into-array)]
     (.parse parser build-options args)))
 
