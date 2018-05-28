@@ -3,10 +3,12 @@
             [hk.gavin.tabula-api.extractor :as extractor]))
 
 (def sample-option-map
-  {:area "%0,0,100,100" :format "CSV" :pages "all" :stream "yes"})
+  {:area ["%0,0,100,50" "%0,50,100,100"] :format "CSV"
+   :pages "1" :stream "yes"})
 
 (def sample-option-map-expect
-  ["--area" "%0,0,100,100" "--format" "CSV" "--pages" "all" "--stream"])
+  ["--area" "%0,0,100,50" "--area" "%0,50,100,100" "--format" "CSV"
+   "--pages" "1" "--stream"])
 
 (defn option->string-list-assert
   [option expect]
@@ -17,7 +19,7 @@
 
 (deftest multi-string-arg-option->string-list-test
   (option->string-list-assert
-   [:area ["%0,0,100,50", "%0,50,100,100"]]
+   [:area ["%0,0,100,50" "%0,50,100,100"]]
    ["--area" "%0,0,100,50" "--area" "%0,50,100,100"]))
 
 (deftest multi-string-arg-option->string-list-single-element-test
