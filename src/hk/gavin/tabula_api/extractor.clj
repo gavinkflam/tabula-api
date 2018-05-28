@@ -24,19 +24,24 @@
     :else                  true))
 
 (defmulti option->string-list
-  "Convert an element of the option map into a list of CLI argument string."
+  "Convert an element of the option map into a list of CLI argument string.
+
+  Ineffective and unsupported options were mapped to empty list."
   (fn [[k _]] (option-types k)))
 
 (defmethod option->string-list :string-arg [[k v]]
-  (if (some? v) [(str "--" (name k)) v]))
+  (if (some? v) [(str "--" (name k)) v] []))
 
 (defmethod option->string-list :boolean-flag [[k v]]
-  (if (option-truthy? v) [(str "--" (name k))]))
+  (if (option-truthy? v) [(str "--" (name k))] []))
+
+(defmethod option->string-list :default [_]
+  [])
 
 (defn option-map->string-list
   "Convert a full option map into a list of CLI argument string."
   [option-map]
-  (flatten (->> option-map (map option->string-list) (remove nil?))))
+  (->> option-map (map option->string-list) flatten))
 
 (defn option-map->command-line
   "Convert a full option map into a Apache commons CommanLine object.

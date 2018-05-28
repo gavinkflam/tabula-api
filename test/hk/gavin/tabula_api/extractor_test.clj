@@ -19,7 +19,7 @@
   (option->string-list-assert [:guess "true"] ["--guess"]))
 
 (deftest boolean-flag-option->string-list-false-string-test
-  (option->string-list-assert [:guess "false"] nil))
+  (option->string-list-assert [:guess "false"] []))
 
 (deftest boolean-flag-option->string-list-empty-string-test
   (option->string-list-assert [:guess ""] ["--guess"]))
@@ -28,7 +28,10 @@
   (option->string-list-assert [:guess "yolo"] ["--guess"]))
 
 (deftest boolean-flag-option->string-list-no-string-test
-  (option->string-list-assert [:guess "no"] nil))
+  (option->string-list-assert [:guess "no"] []))
+
+(deftest unsupported-option->string-list-no-string-test
+  (option->string-list-assert [:poitroae "poitroaeitroae"] []))
 
 (deftest option-map->string-list-test
   (is (=
