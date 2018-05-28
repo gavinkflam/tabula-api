@@ -13,7 +13,18 @@
   (is (= (extractor/option->string-list option) expect)))
 
 (deftest string-arg-option->string-list-test
-  (option->string-list-assert [:area "%0,0,100,100"] ["--area" "%0,0,100,100"]))
+  (option->string-list-assert [:columns "10,20,30"] ["--columns" "10,20,30"]))
+
+(deftest multi-string-arg-option->string-list-test
+  (option->string-list-assert
+   [:area ["%0,0,100,50", "%0,50,100,100"]]
+   ["--area" "%0,0,100,50" "--area" "%0,50,100,100"]))
+
+(deftest multi-string-arg-option->string-list-single-element-test
+  (option->string-list-assert [:area ["%0,0,100,50"]] ["--area" "%0,0,100,50"]))
+
+(deftest multi-string-arg-option->string-list-string-test
+  (option->string-list-assert [:area "%0,0,100,50"] ["--area" "%0,0,100,50"]))
 
 (deftest boolean-flag-option->string-list-test
   (option->string-list-assert [:guess "true"] ["--guess"]))

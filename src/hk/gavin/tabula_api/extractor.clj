@@ -10,8 +10,8 @@
 
 (def option-types
   "Mapping of option name to its option type.
-  Option types include sting-arg and boolean-flag."
-  {:area :string-arg :columns :string-arg :format :string-arg
+  Option types include sting-arg, multi-string-arg and boolean-flag."
+  {:area :multi-string-arg :columns :string-arg :format :string-arg
    :guess :boolean-flag :lattice :boolean-flag :pages :string-arg
    :password :string-arg :stream :boolean-flag})
 
@@ -23,25 +23,35 @@
     (:or nil "false" "no") false
     :else                  true))
 
+(defn string-arg-option->string-list
+  "Convert a string-arg option into a list of CLI argument string."
+  [[k v]]
+  (if (some? v) [(str "--" (name k)) v] []))
+
 (defmulti option->string-list
   "Convert an element of the option map into a list of CLI argument string.
 
   Ineffective and unsupported options were mapped to empty list."
-  (fn [[k _]] (option-types k)))
+  (fn [[k _]] (get-in option-types k :unsupported)))
 
-(defmethod option->string-list :string-arg [[k v]]
-  (if (some? v) [(str "--" (name k)) v] []))
+(defmethod option->string-list :string-arg [m]
+  (string-arg-option->string-list m))
+
+(defmethod option->string-list :multi-string-arg [[k v]]
+  (if (vector? v)
+    (mapcat #(string-arg-option->string-list [k %1]) v)
+    (string-arg-option->string-list [k v])))
 
 (defmethod option->string-list :boolean-flag [[k v]]
   (if (option-truthy? v) [(str "--" (name k))] []))
 
-(defmethod option->string-list :default [_]
+(defmethod option->string-list :unsupported [_]
   [])
 
 (defn option-map->string-list
   "Convert a full option map into a list of CLI argument string."
   [option-map]
-  (->> option-map (map option->string-list) flatten))
+  (mapcat option->string-list option-map))
 
 (defn option-map->command-line
   "Convert a full option map into a Apache commons CommanLine object.
