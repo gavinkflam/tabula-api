@@ -32,7 +32,7 @@
   "Convert an element of the option map into a list of CLI argument string.
 
   Ineffective and unsupported options were mapped to empty list."
-  (fn [[k _]] (get-in option-types k :unsupported)))
+  (fn [[k _]] (get option-types k :unsupported)))
 
 (defmethod option->string-list :string-arg [m]
   (string-arg-option->string-list m))
