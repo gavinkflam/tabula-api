@@ -53,3 +53,16 @@
   (is (=
        (extractor/option-map->string-vector sample-option-map)
        sample-option-map-expect)))
+
+(deftest option-map->command-line-test
+  (let [cmd-line (extractor/option-map->command-line sample-option-map)]
+    (is (.hasOption cmd-line "area"))
+    (let [areas (.getOptionValues cmd-line "area")]
+      (is (= (first areas) "%0,0,100,50"))
+      (is (= (second areas) "%0,50,100,100")))
+    (is (.hasOption cmd-line "format"))
+    (is (= (.getOptionValue cmd-line "format") "CSV"))
+    (is (.hasOption cmd-line "pages"))
+    (is (= (.getOptionValue cmd-line "pages") "1"))
+    (is (.hasOption cmd-line "stream"))
+    (is (not (.hasOption cmd-line "guess")))))
