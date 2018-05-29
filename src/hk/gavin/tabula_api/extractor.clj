@@ -23,35 +23,35 @@
     (:or nil "false" "no") false
     :else                  true))
 
-(defn string-arg-option->string-list
-  "Convert a string-arg option into a list of CLI argument string."
+(defn string-arg-option->string-vector
+  "Convert a string-arg option into a vector of CLI argument string."
   [[k v]]
   (if (some? v) [(str "--" (name k)) v] []))
 
-(defmulti option->string-list
-  "Convert an element of the option map into a list of CLI argument string.
+(defmulti option->string-vector
+  "Convert an element of the option map into a vector of CLI argument string.
 
-  Ineffective and unsupported options were mapped to empty list."
+  Ineffective and unsupported options were mapped to empty vector."
   (fn [[k _]] (get option-types k :unsupported)))
 
-(defmethod option->string-list :string-arg [m]
-  (string-arg-option->string-list m))
+(defmethod option->string-vector :string-arg [m]
+  (string-arg-option->string-vector m))
 
-(defmethod option->string-list :multi-string-arg [[k v]]
+(defmethod option->string-vector :multi-string-arg [[k v]]
   (if (vector? v)
-    (mapcat #(string-arg-option->string-list [k %1]) v)
-    (string-arg-option->string-list [k v])))
+    (mapcat #(string-arg-option->string-vector [k %1]) v)
+    (string-arg-option->string-vector [k v])))
 
-(defmethod option->string-list :boolean-flag [[k v]]
+(defmethod option->string-vector :boolean-flag [[k v]]
   (if (option-truthy? v) [(str "--" (name k))] []))
 
-(defmethod option->string-list :unsupported [_]
+(defmethod option->string-vector :unsupported [_]
   [])
 
-(defn option-map->string-list
-  "Convert a full option map into a list of CLI argument string."
+(defn option-map->string-vector
+  "Convert a full option map into a vector of CLI argument string."
   [option-map]
-  (mapcat option->string-list option-map))
+  (mapcat option->string-vector option-map))
 
 (defn option-map->command-line
   "Convert a full option map into a Apache commons CommanLine object.
@@ -59,7 +59,7 @@
   [option-map]
   (let [parser (DefaultParser.)
         build-options (CommandLineApp/buildOptions)
-        args (-> option-map option-map->string-list into-array)]
+        args (-> option-map option-map->string-vector into-array)]
     (.parse parser build-options args)))
 
 (defn extract-tables
