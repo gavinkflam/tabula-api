@@ -6,7 +6,7 @@
   {:area ["%0,0,100,50" "%0,50,100,100"] :format "CSV"
    :pages "1" :stream "yes"})
 
-(def sample-option-map-expect
+(def sample-option-map-expect-string-vector
   ["--area" "%0,0,100,50" "--area" "%0,50,100,100" "--format" "CSV"
    "--pages" "1" "--stream"])
 
@@ -52,7 +52,7 @@
 (deftest option-map->string-vector-test
   (is (=
        (extractor/option-map->string-vector sample-option-map)
-       sample-option-map-expect)))
+       sample-option-map-expect-string-vector)))
 
 (deftest option-map->command-line-test
   (let [cmd-line (extractor/option-map->command-line sample-option-map)]
