@@ -36,17 +36,26 @@
 (deftest boolean-flag-option->string-vector-test
   (option->string-vector-assert [:guess "true"] ["--guess"]))
 
+(deftest boolean-flag-option->string-vector-true-test
+  (option->string-vector-assert [:guess true] ["--guess"]))
+
+(deftest boolean-flag-option->string-vector-true-string-test
+  (option->string-vector-assert [:guess "true"] ["--guess"]))
+
+(deftest boolean-flag-option->string-vector-false-test
+  (option->string-vector-assert [:guess false] []))
+
 (deftest boolean-flag-option->string-vector-false-string-test
   (option->string-vector-assert [:guess "false"] []))
+
+(deftest boolean-flag-option->string-vector-no-string-test
+  (option->string-vector-assert [:guess "no"] []))
 
 (deftest boolean-flag-option->string-vector-empty-string-test
   (option->string-vector-assert [:guess ""] ["--guess"]))
 
 (deftest boolean-flag-option->string-vector-any-string-test
   (option->string-vector-assert [:guess "yolo"] ["--guess"]))
-
-(deftest boolean-flag-option->string-vector-no-string-test
-  (option->string-vector-assert [:guess "no"] []))
 
 (deftest unsupported-option->string-vector-no-string-test
   (option->string-vector-assert [:poitroae "poitroaeitroae"] []))

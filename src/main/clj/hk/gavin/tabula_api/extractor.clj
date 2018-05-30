@@ -17,11 +17,11 @@
 
 (defn option-truthy?
   "Returns true if v is truthy for a value, false otherwise.
-  nil, \"false\" and \"no\" is considered falsy."
+  nil, false, \"false\" and \"no\" is considered falsy."
   [v]
   (match v
-    (:or nil "false" "no") false
-    :else                  true))
+    (:or nil false "false" "no") false
+    :else                        true))
 
 (defn string-arg-option->string-vector
   "Convert a string-arg option into a vector of CLI argument string."
