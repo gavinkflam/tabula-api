@@ -11,5 +11,9 @@
                  [io.pedestal/pedestal.jetty "0.5.3"]
                  [org.slf4j/slf4j-simple "1.7.25"]
                  [technology.tabula/tabula "1.0.2"]]
-  :profiles {:dev {:dependencies [[io.pedestal/pedestal.service-tools "0.5.3"]]}}
+  :source-paths ["src/main/clj"]
+  :test-paths ["src/test/clj"]
+  :resource-paths ["src/main/resources"]
+  :profiles {:dev {:dependencies [[io.pedestal/pedestal.service-tools "0.5.3"]]}
+                   :resource-paths ["src/test/resources"]}
   :main hk.gavin.tabula-api.server)
