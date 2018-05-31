@@ -14,7 +14,8 @@
   :source-paths ["src/main/clj"]
   :test-paths ["src/test/clj"]
   :resource-paths ["src/main/resources"]
-  :profiles {:dev {:dependencies [[commons-io/commons-io "2.6"]
+  :profiles {:dev {:dependencies [[clj-http "3.9.0"]
+                                  [commons-io/commons-io "2.6"]
                                   [io.pedestal/pedestal.service-tools "0.5.3"]]
                    :resource-paths ["src/test/resources"]}}
   :main hk.gavin.tabula-api.server)
