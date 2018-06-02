@@ -23,6 +23,7 @@
   (client/request (merge base-req req)))
 
 (deftest extract-tables-test
+  (server/run-dev)
   (let [resp (request {:uri "/extract_tables"
                        :method :post
                        :multipart sample-form})

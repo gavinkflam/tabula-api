@@ -3,31 +3,33 @@
   (:require [io.pedestal.http :as http]
             [hk.gavin.tabula-api.service :as service]))
 
-;; This is an adapted service map, that can be started and stopped
-;; From the REPL you can call http/start and http/stop on this service
-(defonce runnable-service (http/create-server service/service))
+(defn run-prod
+  "Create the production server if not yet created, and start the server."
+  []
+  (defonce prod-serv (http/create-server service/service))
+  (http/start prod-serv))
 
 (defn run-dev
-  "The entry-point for starting a development server in REPL session."
-  [& args]
-  (println "\nCreating your [DEV] server...")
-  (-> service/service ;; start with production configuration
-      (merge {:env :dev
-              ;; do not block thread that starts web server
-              ::http/join? false
-              ;; Routes can be a function that resolve routes,
-              ;;  we can use this to set the routes to be reloadable
-              ::http/routes #(deref #'service/routes)
-              ;; all origins are allowed in dev mode
-              ::http/allowed-origins {:creds true :allowed-origins (constantly true)}})
-      ;; Wire up interceptor chains
-      http/default-interceptors
-      http/dev-interceptors
-      http/create-server
-      http/start))
+  "Create the development server if not yet created, and start the server."
+  []
+  (defonce dev-serv
+    (-> service/service ;; start with production configuration
+        (merge {:env :dev
+                ;; do not block thread that starts web server
+                ::http/join? false
+                ;; Routes can be a function that resolve routes,
+                ;;  we can use this to set the routes to be reloadable
+                ::http/routes #(deref #'service/routes)
+                ;; all origins are allowed in dev mode
+                ::http/allowed-origins {:creds true
+                                        :allowed-origins (constantly true)}})
+        ;; Wire up interceptor chains
+        http/default-interceptors
+        http/dev-interceptors
+        http/create-server))
+  (http/start dev-serv))
 
 (defn -main
-  "The entry-point for 'lein run'"
+  "The entry-point for 'lein run' and uberjar."
   [& args]
-  (println "\nCreating your server...")
-  (http/start runnable-service))
+  (run-prod))
