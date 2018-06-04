@@ -8,7 +8,8 @@
 (def base-req
   {:scheme :http
    :server-name "localhost"
-   :server-port 8080})
+   :server-port 8080
+   :throw-exceptions false})
 
 (def sample-form
   [{:name "area"   :content "%0,0,100,50"}
@@ -22,6 +23,10 @@
   [req]
   (client/request (merge base-req req)))
 
+(defn update-field
+  [form name content]
+  (map #(if (= (get % :name) name) (assoc % :content content) %) form))
+
 (deftest extract-tables-test
   (server/run-dev)
   (let [resp (request {:uri "/extract_tables"
@@ -32,3 +37,12 @@
     (is (= (get resp :status) 200))
     (FileUtils/writeStringToFile output-csv (get resp :body) nil)
     (is (FileUtils/contentEqualsIgnoreEOL expect-csv output-csv nil))))
+
+(deftest extract-tables-format-error-test
+  (server/run-dev)
+  (let [resp (request {:uri "/extract_tables"
+                       :method :post
+                       :multipart (update-field sample-form "format" "FOO")})]
+    (is (= (get resp :status) 400))
+    (is (= (get resp :body)
+           "format FOO is illegal. Available formats: CSV,TSV,JSON"))))
