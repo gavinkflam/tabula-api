@@ -3,7 +3,15 @@
             [io.pedestal.http :as http]
             [io.pedestal.http.route :as route]
             [io.pedestal.http.ring-middlewares :as middlewares]
+            [io.pedestal.interceptor.error :as error-int]
             [hk.gavin.tabula-api.extractor :as extractor]))
+
+(def service-error-handler
+  (error-int/error-dispatch
+   [ctx ex]
+   [{:exception-type :org.apache.commons.cli.ParseException}]
+   (assoc ctx :response {:status 400
+                         :body (-> ex ex-data :exception .getMessage)})))
 
 (defn params->option-map
   [params]
@@ -19,8 +27,9 @@
 
 (def routes
   (route/expand-routes
-   [[["/extract_tables" ^:interceptors [(middlewares/multipart-params)]
-      {:post `extract-tables}]]]))
+   #{["/extract_tables" :post [service-error-handler
+                               (middlewares/multipart-params)
+                               `extract-tables]]}))
 
 (def service {:env                 :prod
               ::http/routes        routes
