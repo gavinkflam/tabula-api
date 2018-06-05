@@ -39,7 +39,7 @@
         expect-csv (io/file (io/resource "multi-column.csv"))
         output-csv (java.io.File/createTempFile "extract-tables-test" ".csv")]
     (is (= (get resp :status) 200))
-    (FileUtils/writeStringToFile output-csv (get resp :body) nil)
+    (FileUtils/writeStringToFile output-csv (get resp :body) "UTF-8")
     (is (FileUtils/contentEqualsIgnoreEOL expect-csv output-csv nil))))
 
 (deftest extract-tables-format-error-test
