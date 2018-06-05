@@ -78,6 +78,17 @@
     (is (.hasOption cmd-line "stream"))
     (is (not (.hasOption cmd-line "guess")))))
 
+(deftest validate-pdf-file-missing-file-test
+  (is (thrown-with-msg?
+       IllegalArgumentException #"file is missing."
+       (extractor/validate-pdf-file nil))))
+
+(deftest validate-pdf-file-non-pdf-file-test
+  (let [multi-column-csv (io/file (io/resource "multi-column.csv"))]
+    (is (thrown-with-msg?
+         IllegalArgumentException #"file is not a valid PDF file."
+         (extractor/validate-pdf-file multi-column-csv)))))
+
 (deftest extract-tables-test
   (let [multi-column-pdf (io/file (io/resource "multi-column.pdf"))
         multi-column-csv (io/file (io/resource "multi-column.csv"))

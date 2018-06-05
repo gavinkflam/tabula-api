@@ -62,10 +62,16 @@
         args (-> option-map option-map->string-vector into-array)]
     (.parse parser build-options args)))
 
+(defn validate-pdf-file
+  "Validate if pdf-file exists and is really a PDF file."
+  [pdf-file]
+  true)
+
 (defn extract-tables
   "Extract the tables from pdf-file against the options specified in option-map.
   The results will be written into out-file."
   [option-map pdf-file out-file]
+  (validate-pdf-file pdf-file)
   (let [cmd-line (option-map->command-line option-map)
         cli-app (CommandLineApp. System/out cmd-line)]
     (.extractFileInto cli-app pdf-file out-file)))
