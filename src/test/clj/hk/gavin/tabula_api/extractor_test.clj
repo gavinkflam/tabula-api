@@ -78,6 +78,10 @@
     (is (.hasOption cmd-line "stream"))
     (is (not (.hasOption cmd-line "guess")))))
 
+(deftest validate-pdf-file-pdf-file-test
+  (let [multi-column-pdf (io/file (io/resource "multi-column.pdf"))]
+    (is (extractor/validate-pdf-file multi-column-pdf))))
+
 (deftest validate-pdf-file-missing-file-test
   (is (thrown-with-msg?
        IllegalArgumentException #"file is missing."
