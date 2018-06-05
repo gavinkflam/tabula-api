@@ -4,14 +4,32 @@
             [io.pedestal.http.route :as route]
             [io.pedestal.http.ring-middlewares :as middlewares]
             [io.pedestal.interceptor.error :as error-int]
+            [io.pedestal.log :as log]
             [hk.gavin.tabula-api.extractor :as extractor]))
+
+(defn log-pedestal-exception
+  [ctx ex code]
+  (let [cause (-> ex ex-data :exception)
+        error-name (-> cause class .getSimpleName)
+        log-message (str error-name ": " (.getMessage cause))
+        path (get-in ctx [:request :path-info])]
+    (if (<= 400 code 499)
+      (log/info :msg log-message :path path)
+      (log/error :msg log-message :path path :ctx ctx :exception cause))))
+
+(defn pedestal-exception->response
+  [ctx ex code]
+  (let [message (-> ex ex-data :exception .getMessage)]
+    (log-pedestal-exception ctx ex code)
+    (assoc ctx :response {:status code :body message})))
 
 (def service-error-handler
   (error-int/error-dispatch
    [ctx ex]
    [{:exception-type :org.apache.commons.cli.ParseException}]
-   (assoc ctx :response {:status 400
-                         :body (-> ex ex-data :exception .getMessage)})))
+   (pedestal-exception->response ctx ex 400)
+   :else
+   (pedestal-exception->response ctx ex 500)))
 
 (defn params->option-map
   [params]
