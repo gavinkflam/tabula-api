@@ -26,7 +26,8 @@
 (def service-error-handler
   (error-int/error-dispatch
    [ctx ex]
-   [{:exception-type :org.apache.commons.cli.ParseException}]
+   [{:exception-type (:or :org.apache.commons.cli.ParseException
+                          :java.lang.IllegalArgumentException)}]
    (pedestal-exception->response ctx ex 400)
    :else
    (pedestal-exception->response ctx ex 500)))
