@@ -8,8 +8,8 @@ services:
   nginx:
     image: nginx:1.13.2-alpine
     volumes:
-      - ${project_root}/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ${project_root}/dev/nginx/gzip.conf:/etc/nginx/gzip.conf
+      - ${project_root}/.dev/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ${project_root}/.dev/nginx/gzip.conf:/etc/nginx/gzip.conf
     environment:
       # System variables
       TZ: Asia/Hong_Kong
@@ -26,12 +26,12 @@ services:
       TZ: Asia/Hong_Kong
     volumes:
       - ${project_root}:/usr/src/app
-      - ${project_root}/dev/lein/profiles.clj:${home}/.lein/profiles.clj
+      - ${project_root}/.dev/lein/profiles.clj:${home}/.lein/profiles.clj
       - m2:${home}/.m2
     working_dir: /usr/src/app
     # Prepare home, user and group via prepare-container helper script
     command: >
-      sh -c "/usr/src/app/dev/scripts/prepare-container \
+      sh -c "/usr/src/app/.dev/scripts/prepare-container \
                 ${uid} ${uname} ${gid} ${gname} ${home} && \
             tail -f /dev/null"
     ports:
