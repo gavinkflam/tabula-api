@@ -3,6 +3,7 @@ lein: 2.8.1
 
 jdk:
 - openjdk8
-- openjdk9
+# Disabled temporarily because of failure in the lein deps process.
+# - openjdk9
 - oraclejdk8
 - oraclejdk9
