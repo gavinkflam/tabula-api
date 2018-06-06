@@ -16,7 +16,7 @@ jobs:
           paths:
             - ~/.m2
           key: tabula-api-{{ checksum "project.clj" }}
-      - run: lein do test, uberjar
-      - store_artifacts:
-          path: target/uberjar/tabula-api.jar
-          destination: uberjar
+      - run: lein do test, cljfmt check, kibit, eastwood
+      - run: >
+          lein cloverage --codecov &&
+          bash <(curl -s https://codecov.io/bash)
