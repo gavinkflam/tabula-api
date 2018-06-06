@@ -1,4 +1,7 @@
-# tabula-api
+tabula-api
+[![Travis CI Status](https://travis-ci.org/gavinkflam/tabula-api.svg?branch=master)](https://travis-ci.org/gavinkflam/tabula-api)
+[![CircleCI Status](https://circleci.com/gh/gavinkflam/tabula-api/tree/master.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/gavinkflam/tabula-api/tree/master)
+==========
 
 An API server extracting tables from PDF files via [tabula-java][tabula-java].
 
