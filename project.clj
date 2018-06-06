@@ -19,6 +19,15 @@
   :profiles {:dev {:dependencies [[clj-http "3.9.0"]
                                   [commons-io/commons-io "2.6"]
                                   [io.pedestal/pedestal.service-tools "0.5.3"]]
+                   :plugins [[jonase/eastwood "0.2.6"
+                              :exclusions [org.clojure/clojure]]
+                             [lein-cloverage "1.0.10"
+                              :exclusions [org.clojure/clojure]]
+                             [lein-cljfmt "0.5.7"
+                              :exclusions [org.clojure/clojure
+                                           rewrite-cljs]]
+                             [lein-kibit "0.1.6"
+                              :exclusions [org.clojure/clojure]]]
                    :resource-paths ["src/test/resources"]}}
   :main hk.gavin.tabula-api.server
   :aot [hk.gavin.tabula-api.server])
