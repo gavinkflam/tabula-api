@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+function main() {
+  local shims_dir="$( cd -P "$( dirname -- "$0" )" && pwd )"
+  "${shims_dir}/tb-exec" 'clojure' 'java' "$@"
+}
+
+main "$@"

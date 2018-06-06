@@ -10,7 +10,7 @@ function main() {
       project_root="${project_root}" \
       docker-compose \
       -p tabula-api-dev \
-      -f "${project_root}/dev/docker-compose.yml" \
+      -f "${project_root}/.dev/docker-compose.yml" \
       $@
 }
 
