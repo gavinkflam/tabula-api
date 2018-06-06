@@ -19,4 +19,5 @@
                                   [commons-io/commons-io "2.6"]
                                   [io.pedestal/pedestal.service-tools "0.5.3"]]
                    :resource-paths ["src/test/resources"]}}
-  :main hk.gavin.tabula-api.server)
+  :main hk.gavin.tabula-api.server
+  :aot [hk.gavin.tabula-api.server])
