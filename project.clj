@@ -1,4 +1,5 @@
-(defproject hk.gavin.tabula-api "0.1.0-SNAPSHOT"
+(defproject hk.gavin.tabula-api
+  (-> "VERSION" slurp clojure.string/trim-newline)
   :description "An API server extracting tables from PDF files via tabula-java."
   :url "https://github.com/gavinkflam/tabula-api"
   :license {:name "MIT License"
