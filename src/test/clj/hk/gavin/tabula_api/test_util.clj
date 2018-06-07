@@ -7,7 +7,8 @@
   (-> file-name io/resource io/file))
 
 (def base-req
-  {:scheme :http
+  {:method :get
+   :scheme :http
    :server-name "localhost"
    :server-port 8080
    :throw-exceptions false})
