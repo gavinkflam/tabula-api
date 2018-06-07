@@ -26,4 +26,4 @@ COPY --from=builder \
     /usr/src/app/target/tabula-api-standalone.jar \
     /usr/src/app/tabula-api-standalone.jar
 
-CMD ["java", "-jar", "/usr/src/app/hk.gavin.tabula-api-standalone.jar"]
+CMD ["java", "-jar", "/usr/src/app/tabula-api-standalone.jar"]
