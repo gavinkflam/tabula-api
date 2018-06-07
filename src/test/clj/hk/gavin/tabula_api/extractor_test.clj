@@ -1,7 +1,8 @@
 (ns hk.gavin.tabula-api.extractor-test
   (:require [clojure.test :refer :all]
             [clojure.java.io :as io]
-            [hk.gavin.tabula-api.extractor :as extractor])
+            [hk.gavin.tabula-api.extractor :as extractor]
+            [hk.gavin.tabula-api.test-util :as util])
   (:import (org.apache.commons.io FileUtils)))
 
 (def sample-option-map
@@ -79,7 +80,7 @@
     (is (not (.hasOption cmd-line "guess")))))
 
 (deftest validate-pdf-file-pdf-file-test
-  (let [multi-column-pdf (io/file (io/resource "multi-column.pdf"))]
+  (let [multi-column-pdf (util/resource-file "multi-column.pdf")]
     (is (extractor/validate-pdf-file multi-column-pdf))))
 
 (deftest validate-pdf-file-missing-file-test
@@ -88,14 +89,14 @@
        (extractor/validate-pdf-file nil))))
 
 (deftest validate-pdf-file-non-pdf-file-test
-  (let [multi-column-csv (io/file (io/resource "multi-column.csv"))]
+  (let [multi-column-csv (util/resource-file "multi-column.csv")]
     (is (thrown-with-msg?
          IllegalArgumentException #"file is not a valid PDF file."
          (extractor/validate-pdf-file multi-column-csv)))))
 
 (deftest extract-tables-test
-  (let [multi-column-pdf (io/file (io/resource "multi-column.pdf"))
-        multi-column-csv (io/file (io/resource "multi-column.csv"))
+  (let [multi-column-pdf (util/resource-file "multi-column.pdf")
+        multi-column-csv (util/resource-file "multi-column.csv")
         output-csv (java.io.File/createTempFile "extract-tables-test" ".csv")]
     (extractor/extract-tables sample-option-map multi-column-pdf output-csv)
     (is (FileUtils/contentEqualsIgnoreEOL multi-column-csv output-csv nil))))
