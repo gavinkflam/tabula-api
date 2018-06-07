@@ -13,8 +13,8 @@ COPY . .
 RUN \
   lein uberjar && \
   cp \
-      target/hk.gavin.tabula-api-$(cat VERSION)-standalone.jar \
-      target/hk.gavin.tabula-api-standalone.jar
+      target/tabula-api-$(cat VERSION)-standalone.jar \
+      target/tabula-api-standalone.jar
 
 # =============================================================================
 FROM openjdk:8u151-jre-alpine3.7
@@ -23,7 +23,7 @@ LABEL maintainer="me@gavin.hk"
 EXPOSE 8080
 
 COPY --from=builder \
-    /usr/src/app/target/hk.gavin.tabula-api-standalone.jar \
-    /usr/src/app/hk.gavin.tabula-api-standalone.jar
+    /usr/src/app/target/tabula-api-standalone.jar \
+    /usr/src/app/tabula-api-standalone.jar
 
 CMD ["java", "-jar", "/usr/src/app/hk.gavin.tabula-api-standalone.jar"]
