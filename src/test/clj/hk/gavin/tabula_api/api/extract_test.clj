@@ -1,4 +1,4 @@
-(ns hk.gavin.tabula-api.service-test
+(ns hk.gavin.tabula-api.api.extract-test
   (:require [clojure.test :refer :all]
             [clojure.java.io :as io]
             [clj-http.client :as client]
@@ -33,7 +33,7 @@
 
 (deftest extract-tables-test
   (server/run-dev)
-  (let [resp (request {:uri "/extract_tables"
+  (let [resp (request {:uri "/api/extract"
                        :method :post
                        :multipart base-form})
         expect-csv (io/file (io/resource "multi-column.csv"))
@@ -44,7 +44,7 @@
 
 (deftest extract-tables-format-error-test
   (server/run-dev)
-  (let [resp (request {:uri "/extract_tables"
+  (let [resp (request {:uri "/api/extract"
                        :method :post
                        :multipart (update-field base-form "format" "FOO")})]
     (is (= (get resp :status) 400))
@@ -53,7 +53,7 @@
 
 (deftest extract-tables-file-missing-error-test
   (server/run-dev)
-  (let [resp (request {:uri "/extract_tables"
+  (let [resp (request {:uri "/api/extract"
                        :method :post
                        :multipart (update-field base-form "file" "")})]
     (is (= (get resp :status) 400))
@@ -62,7 +62,7 @@
 (deftest extract-tables-file-non-pdf-error-test
   (server/run-dev)
   (let [form (update-field base-form "file" (resource-file "multi-column.csv"))
-        resp (request {:uri "/extract_tables"
+        resp (request {:uri "/api/extract"
                        :method :post
                        :multipart form})]
     (is (= (get resp :status) 400))
