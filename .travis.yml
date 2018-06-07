@@ -1,9 +1,27 @@
 language: clojure
 lein: 2.8.1
 
+dist: trusty
+
 jdk:
-- openjdk8
-# Disabled temporarily because of failure in the lein deps process.
-# - openjdk9
-- oraclejdk8
-- oraclejdk9
+  # JDK 8
+  - openjdk8
+  - oraclejdk8
+  # JDK 9
+  - oraclejdk9
+
+matrix:
+  include:
+    # OpenJDK 9 separatedly defined to symlink CA certificates.
+    #
+    # Travis CI will provide a unpatched JDK installation.
+    # However, fetching artifacts from clojars will fail because of outdated
+    # CA certificates.
+    # Thus, it is required to symlinking the system certificates manually.
+    #
+    # https://stackoverflow.com/q/50712164/2621216
+    # https://github.com/travis-ci/travis-ci/issues/9368#issuecomment-395354755
+    - jdk: openjdk9
+      before_install:
+        - rm "${JAVA_HOME}/lib/security/cacerts"
+        - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
