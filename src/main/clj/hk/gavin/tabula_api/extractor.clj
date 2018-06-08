@@ -70,11 +70,11 @@
 (defn validate-pdf-file
   "Validate if pdf-file exists and is really a PDF file."
   [pdf-file]
-  (and
-   (or (instance? java.io.File pdf-file)
-       (throw (IllegalArgumentException. "file is missing.")))
-   (or (= (.detect @tika pdf-file) "application/pdf")
-       (throw (IllegalArgumentException. "file is not a valid PDF file.")))))
+  (or (instance? java.io.File pdf-file)
+      (throw (IllegalArgumentException. "file is missing.")))
+  (or (= (.detect @tika pdf-file) "application/pdf")
+      (throw (IllegalArgumentException. "file is not a valid PDF file.")))
+  true)
 
 (defn extract-tables
   "Extract the tables from pdf-file against the options specified in option-map.
