@@ -12,5 +12,5 @@
 (def service {:env                 :prod
               ::http/routes        routes
               ::http/resource-path "/public"
-              ::http/type          :jetty
+              ::http/type          :immutant
               ::http/port          8080})
