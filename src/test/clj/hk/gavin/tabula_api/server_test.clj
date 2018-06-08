@@ -18,8 +18,8 @@
     (version-test/test-api-version)
     (http/stop @server/prod-serv)))
 
-(deftest run-dev-test
+(deftest server-main-test
   (stop-all-servers)
-  (server/run-dev)
+  (server/-main)
   (version-test/test-api-version)
   (http/stop @server/dev-serv))
