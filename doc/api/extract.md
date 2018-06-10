@@ -4,7 +4,7 @@
 
 The parameters and documentations are derived from `tabula-java` 1.0.2.
 
-You should consult the [document](tabula-java-doc) for more details and quirks.
+You should consult the [document][tabula-java-doc] for more details and quirks.
 
 ## Content types
 
