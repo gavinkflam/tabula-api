@@ -1,5 +1,6 @@
 (ns hk.gavin.tabula-api.api.extract
   (:require [clojure.walk :as walk]
+            [io.pedestal.http.content-negotiation :as neg]
             [io.pedestal.http.ring-middlewares :as middlewares]
             [io.pedestal.interceptor.error :as error-int]
             [io.pedestal.log :as log]
@@ -30,13 +31,38 @@
    :else
    (pedestal-exception->response ctx ex 500)))
 
-(defn params->option-map
-  [params]
-  (-> params (dissoc "file") (walk/keywordize-keys)))
+(def supported-mime-types
+  ["text/csv" "application/json" "text/tab-separated-values"])
+
+(defn throw-illegal-mime-type
+  [mime-type]
+  (throw (IllegalArgumentException. (str mime-type " is not supported."))))
+
+(defn no-mime-types-match
+  [context]
+  (-> context (get-in [:request :headers "accept"]) throw-illegal-mime-type))
+
+(def content-negotiator
+  (neg/negotiate-content supported-mime-types
+                         {:no-match-fn no-mime-types-match}))
+
+(defn mime-type->format
+  [mime-type]
+  (case mime-type
+    "text/csv"                  "CSV"
+    "application/json"          "JSON"
+    "text/tab-separated-values" "TSV"
+    (throw-illegal-mime-type)))
+
+(defn request->option-map
+  [request]
+  (let [out-format (-> request (get-in [:accept :field]) mime-type->format)]
+    (-> request (get :params) (dissoc "file") (walk/keywordize-keys)
+        (merge {:format out-format}))))
 
 (defn extract
   [request]
-  (let [params (-> request (get :params) params->option-map)
+  (let [params (request->option-map request)
         pdf-file (get-in request [:params "file" :tempfile])
         out-file (java.io.File/createTempFile "out-file" ".tmp")]
     (extractor/validate-pdf-file pdf-file)
@@ -45,5 +71,6 @@
 
 (def routes
   #{["/api/extract" :post [extract-error-handler
+                           content-negotiator
                            (middlewares/multipart-params)
                            `extract]]})
