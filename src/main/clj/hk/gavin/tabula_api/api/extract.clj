@@ -34,6 +34,15 @@
 (def supported-mime-types
   ["text/csv" "application/json" "text/tab-separated-values"])
 
+(def apply-content-type
+  {:name ::apply-content-type
+   :leave (fn [context]
+            (cond-> context
+              (= 200 (get-in context [:response :status]))
+              (update-in
+               [:response :headers "Content-Type"]
+               (-> context (get-in [:request :accept :field]) constantly))))})
+
 (defn throw-illegal-mime-type
   [mime-type]
   (throw (IllegalArgumentException. (str mime-type " is not supported."))))
@@ -70,7 +79,8 @@
     {:status 200 :body out-file}))
 
 (def routes
-  #{["/api/extract" :post [extract-error-handler
+  #{["/api/extract" :post [apply-content-type
+                           extract-error-handler
                            content-negotiator
                            (middlewares/multipart-params)
                            `extract]]})
