@@ -1,5 +1,5 @@
 FROM clojure:lein-2.8.1-alpine as builder
-LABEL maintainer="me@gavin.hk"
+LABEL maintainer="Gavin Lam <me@gavin.hk>"
 
 WORKDIR /usr/src/app
 
@@ -18,7 +18,7 @@ RUN \
 
 # =============================================================================
 FROM openjdk:8u151-jre-alpine3.7
-LABEL maintainer="me@gavin.hk"
+LABEL maintainer="Gavin Lam <me@gavin.hk>"
 
 EXPOSE 8080
 
