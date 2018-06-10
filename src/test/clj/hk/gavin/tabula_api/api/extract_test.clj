@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [hk.gavin.tabula-api.server :as server]
             [hk.gavin.tabula-api.test-util :as util])
-  (:import (org.apache.commons.io FileUtils)))
+  (:import (org.apache.commons.io FileUtils)
+           (java.io File)))
 
 (def base-form
   [{:name "area"   :content "%0,0,100,50"}
@@ -11,18 +12,28 @@
    {:name "stream" :content "yes"}
    {:name "file"   :content (util/resource-file "multi-column.pdf")}])
 
-(deftest extract-tables-test
+(defn test-extract-for
+  [mime-type extension]
   (server/run-dev)
   (let [resp (util/request {:uri "/api/extract"
                             :method :post
-                            :accept "text/csv"
+                            :accept mime-type
                             :multipart base-form})
-        expect-csv (util/resource-file "multi-column.csv")
-        output-csv (java.io.File/createTempFile "extract-tables-test" ".csv")]
+        expect-file (util/resource-file (str "multi-column" extension))
+        output-file (File/createTempFile "extract-tables-test" extension)]
     (is (= (get resp :status) 200))
-    (is (= (get-in resp [:headers :content-type]) "text/csv"))
-    (FileUtils/writeStringToFile output-csv (get resp :body) "UTF-8")
-    (is (FileUtils/contentEqualsIgnoreEOL expect-csv output-csv nil))))
+    (is (= (get-in resp [:headers :content-type]) mime-type))
+    (FileUtils/writeStringToFile output-file (get resp :body) "UTF-8")
+    (is (FileUtils/contentEqualsIgnoreEOL expect-file output-file nil))))
+
+(deftest extract-tables-csv-test
+  (test-extract-for "text/csv" ".csv"))
+
+(deftest extract-tables-tsv-test
+  (test-extract-for "text/tab-separated-values" ".tsv"))
+
+(deftest extract-tables-json-test
+  (test-extract-for "application/json" ".json"))
 
 (deftest extract-tables-format-error-test
   (server/run-dev)
