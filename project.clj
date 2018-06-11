@@ -17,17 +17,18 @@
   :test-paths ["src/test/clj"]
   :resource-paths ["src/main/resources"]
   :profiles {:dev {:dependencies [[clj-http "3.9.0"]
-                                  [commons-io/commons-io "2.6"]
-                                  [io.pedestal/pedestal.service-tools "0.5.3"]]
+                                  [commons-io/commons-io "2.6"]]
                    :plugins [[jonase/eastwood "0.2.6"
                               :exclusions [org.clojure/clojure]]
+                             [lein-bikeshed "0.5.1"]
                              [lein-cloverage "1.0.10"
                               :exclusions [org.clojure/clojure]]
                              [lein-cljfmt "0.5.7"
                               :exclusions [org.clojure/clojure
                                            rewrite-cljs]]
                              [lein-kibit "0.1.6"
-                              :exclusions [org.clojure/clojure]]]
+                              :exclusions [org.clojure/clojure]]
+                             [lein-nvd "0.5.3"]]
                    :resource-paths ["src/test/resources"]}}
   :main hk.gavin.tabula-api.server
   :aot [hk.gavin.tabula-api.server])
