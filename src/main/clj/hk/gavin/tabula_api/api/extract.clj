@@ -31,8 +31,10 @@
    :else
    (pedestal-exception->response ctx ex 500)))
 
-(def supported-mime-types
-  ["text/csv" "application/json" "text/tab-separated-values"])
+(def mime-types
+  {"text/csv" "CSV"
+   "application/json" "JSON"
+   "text/tab-separated-values" "TSV"})
 
 (def apply-content-type
   {:name ::apply-content-type
@@ -52,22 +54,14 @@
   (-> context (get-in [:request :headers "accept"]) throw-illegal-mime-type))
 
 (def content-negotiator
-  (neg/negotiate-content supported-mime-types
+  (neg/negotiate-content (keys mime-types)
                          {:no-match-fn no-mime-types-match}))
-
-(defn mime-type->format
-  [mime-type]
-  (case mime-type
-    "text/csv"                  "CSV"
-    "application/json"          "JSON"
-    "text/tab-separated-values" "TSV"
-    (throw-illegal-mime-type)))
 
 (defn request->option-map
   [request]
-  (let [out-format (-> request (get-in [:accept :field]) mime-type->format)]
+  (let [f (as-> request x (get-in x [:accept :field]) (get mime-types x))]
     (-> request (get :params) (dissoc "file") (walk/keywordize-keys)
-        (merge {:format out-format}))))
+        (merge {:format f}))))
 
 (defn extract
   [request]
