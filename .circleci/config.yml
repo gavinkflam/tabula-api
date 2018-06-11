@@ -15,7 +15,7 @@ jobs:
       # Do testing, generate code coverage report, static analysis,
       # check dependency vulnerabilities and compile uberjar
       - run: "lein do \
-                  cloverage --codecov --no-html, \
+                  cloverage --codecov, \
                   cljfmt check, kibit, eastwood, bikeshed, \
                   nvd check, uberjar"
       # Store caches for next build
