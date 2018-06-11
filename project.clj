@@ -29,6 +29,8 @@
                              [lein-kibit "0.1.6"
                               :exclusions [org.clojure/clojure]]
                              [lein-nvd "0.5.3"]]
-                   :resource-paths ["src/test/resources"]}}
+                   :resource-paths ["src/test/resources"]
+                   ; Temporarily disable nvd failure until pedestal 0.5.4
+                   :nvd {:fail-threshold 11}}}
   :main hk.gavin.tabula-api.server
   :aot [hk.gavin.tabula-api.server])
