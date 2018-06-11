@@ -14,11 +14,10 @@ jobs:
           key: tabula-api-{{ checksum "project.clj" }}
       # Do testing, generate code coverage report, static analysis,
       # check dependency vulnerabilities and compile uberjar
-      - run: >
-          lein do \
-              cloverage --codecov --no-html, \
-              cljfmt check, kibit, eastwood, bikeshed, \
-              nvd check, uberjar
+      - run: "lein do \
+                  cloverage --codecov --no-html, \
+                  cljfmt check, kibit, eastwood, bikeshed, \
+                  nvd check, uberjar"
       # Store caches for next build
       - save_cache:
           paths:
@@ -27,11 +26,10 @@ jobs:
       # Upload code coverage report
       - run: bash <(curl -s https://codecov.io/bash)
       # Prepare artifact directories
-      - run: >
-          mkdir -p /tmp/artifacts/uberjar && \
-          cp \
-              target/tabula-api-$(cat VERSION)-standalone.jar \
-              /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar
+      - run: "mkdir -p /tmp/artifacts/uberjar && \
+              cp \
+                  target/tabula-api-$(cat VERSION)-standalone.jar \
+                  /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar"
       # Store the artifact directories
       - store_artifacts:
           path: /tmp/artifacts
