@@ -7,7 +7,7 @@
 
 (def sample-option-map
   {:area ["%0,0,100,50" "%0,50,100,100"] :format "CSV"
-   :pages "1" :stream "yes"})
+   :pages "1" :stream "true"})
 
 (def sample-option-map-expect-string-vector
   ["--area" "%0,0,100,50" "--area" "%0,50,100,100" "--format" "CSV"
@@ -34,32 +34,21 @@
   (option->string-vector-assert
    [:area "%0,0,100,50"] ["--area" "%0,0,100,50"]))
 
-(deftest boolean-flag-option->string-vector-test
-  (option->string-vector-assert [:guess "true"] ["--guess"]))
+(deftest truthy-boolean-flag-values-test
+  (option->string-vector-assert [:guess true] ["--guess"])
+  (option->string-vector-assert [:guess "true"] ["--guess"])
+  (option->string-vector-assert [:guess "True"] ["--guess"]))
 
-(deftest boolean-flag-option->string-vector-true-test
-  (option->string-vector-assert [:guess true] ["--guess"]))
+(deftest falsy-boolean-flag-values-test
+  (option->string-vector-assert [:guess false] [])
+  (option->string-vector-assert [:guess "false"] [])
+  (option->string-vector-assert [:guess "False"] []))
 
-(deftest boolean-flag-option->string-vector-true-string-test
-  (option->string-vector-assert [:guess "true"] ["--guess"]))
-
-(deftest boolean-flag-option->string-vector-false-test
-  (option->string-vector-assert [:guess false] []))
-
-(deftest boolean-flag-option->string-vector-false-string-test
-  (option->string-vector-assert [:guess "false"] []))
-
-(deftest boolean-flag-option->string-vector-no-string-test
-  (option->string-vector-assert [:guess "no"] []))
-
-(deftest boolean-flag-option->string-vector-empty-string-test
-  (option->string-vector-assert [:guess ""] ["--guess"]))
-
-(deftest boolean-flag-option->string-vector-any-string-test
-  (option->string-vector-assert [:guess "yolo"] ["--guess"]))
-
-(deftest unsupported-option->string-vector-no-string-test
-  (option->string-vector-assert [:poitroae "poitroaeitroae"] []))
+(deftest invalid-boolean-flag-values-test
+  (option->string-vector-assert [:guess nil] [])
+  (option->string-vector-assert [:guess ""] [])
+  (option->string-vector-assert [:guess "yolo"] [])
+  (option->string-vector-assert [:guess "TrUe"] []))
 
 (deftest option-map->string-vector-test
   (is (=

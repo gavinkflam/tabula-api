@@ -16,13 +16,12 @@
    :guess :boolean-flag :lattice :boolean-flag :pages :string-arg
    :password :string-arg :stream :boolean-flag})
 
-(defn option-truthy?
-  "Returns true if v is truthy for a value, false otherwise.
-  nil, false, \"false\" and \"no\" is considered falsy."
-  [v]
-  (match v
-    (:or nil false "false" "no") false
-    :else                        true))
+(def boolean-flag-values
+  "Mapping of boolean flag string value to boolean type.
+  true, \"true\" and \"True\" is considered truthy.
+  false, \"false\" and \"False\" is considered falsy."
+  {true true "true" true "True" true
+   false false "false" false "False" false})
 
 (defn string-arg-option->string-vector
   "Convert a string-arg option into a vector of CLI argument string."
@@ -44,7 +43,8 @@
     (string-arg-option->string-vector [k v])))
 
 (defmethod option->string-vector :boolean-flag [[k v]]
-  (if (option-truthy? v) [(str "--" (name k))] []))
+  (let [value (get boolean-flag-values v)]
+    (if (= true value) [(str "--" (name k))] [])))
 
 (defmethod option->string-vector :unsupported [_]
   [])
