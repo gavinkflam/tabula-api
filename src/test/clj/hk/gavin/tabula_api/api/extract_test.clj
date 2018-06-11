@@ -14,7 +14,8 @@
    {:name "file"   :content (util/resource-file "multi-column.pdf")}])
 
 (defn test-extract-for
-  [mime-type extension]
+  [& {:keys [mime-type expect-mime-type extension]
+      :or {expect-mime-type mime-type}}]
   (let [resp (util/request {:uri "/api/extract"
                             :method :post
                             :accept mime-type
@@ -22,17 +23,24 @@
         expect-file (util/resource-file (str "multi-column" extension))
         output-file (File/createTempFile "extract-tables-test" extension)]
     (is (= (get resp :status) 200))
-    (is (= (get-in resp [:headers :content-type]) mime-type))
+    (is (= (get-in resp [:headers :content-type]) expect-mime-type))
     (FileUtils/writeStringToFile output-file (get resp :body) "UTF-8")
     (is (FileUtils/contentEqualsIgnoreEOL expect-file output-file nil))))
 
 (deftest text-extract
   (testing "Extract as CSV"
-    (test-extract-for "text/csv" ".csv"))
+    (test-extract-for :mime-type "text/csv"
+                      :extension ".csv"))
+  (testing "Extract as unspecified type, should return as CSV"
+    (test-extract-for :mime-type "*/*"
+                      :expect-mime-type "text/csv"
+                      :extension ".csv"))
   (testing "Extract as TSV"
-    (test-extract-for "text/tab-separated-values" ".tsv"))
+    (test-extract-for :mime-type "text/tab-separated-values"
+                      :extension ".tsv"))
   (testing "Extract as JSON"
-    (test-extract-for "application/json" ".json")))
+    (test-extract-for :mime-type "application/json"
+                      :extension ".json")))
 
 (defn test-extract-error-for
   [& {:keys [mime-type form expect-body]
@@ -48,8 +56,14 @@
   (testing "Unsupported mime type"
     (test-extract-error-for :mime-type "text/html"
                             :expect-body "text/html is not supported."))
+  (testing "No fields supplied"
+    (test-extract-error-for :form {}
+                            :expect-body "file is missing."))
   (testing "File not supplied"
     (test-extract-error-for :form (util/except-field base-form "file")
+                            :expect-body "file is missing."))
+  (testing "File not a file"
+    (test-extract-error-for :form (util/update-field base-form "file" "kabom")
                             :expect-body "file is missing."))
   (testing "Non-PDF file"
     (test-extract-error-for :form (util/update-field
