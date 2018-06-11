@@ -44,7 +44,7 @@
 
 (defmethod option->string-vector :boolean-flag [[k v]]
   (let [value (get boolean-flag-values v)]
-    (if (= true value) [(str "--" (name k))] [])))
+    (if (true? value) [(str "--" (name k))] [])))
 
 (defmethod option->string-vector :unsupported [_]
   [])
