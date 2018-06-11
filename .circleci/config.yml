@@ -17,7 +17,7 @@ jobs:
             - ~/.m2
           key: tabula-api-{{ checksum "project.clj" }}
       - run: >
-          lein do
+          lein do \
             test, cljfmt check, kibit, eastwood, bikeshed, nvd check, uberjar
       - run: >
           lein cloverage --codecov &&
