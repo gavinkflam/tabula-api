@@ -33,4 +33,4 @@ You can download the JAR file from the release page.
 
 ## Compatibility
 
-OpenJRE or OracleJRE 8 and up.
+OpenJRE or OracleJRE 8, 9, 10, 11.

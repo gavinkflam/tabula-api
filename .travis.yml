@@ -9,10 +9,14 @@ jdk:
   - oraclejdk8
   # JDK 9
   - oraclejdk9
+  # JDK 10
+  - oraclejdk10
+  # JDK 11
+  - oraclejdk11
 
 matrix:
   include:
-    # OpenJDK 9 separatedly defined to symlink CA certificates.
+    # OpenJDK 9+ separatedly defined to symlink CA certificates.
     #
     # Travis CI will provide a unpatched JDK installation.
     # However, fetching artifacts from clojars will fail because of outdated
@@ -22,6 +26,10 @@ matrix:
     # https://stackoverflow.com/q/50712164/2621216
     # https://github.com/travis-ci/travis-ci/issues/9368#issuecomment-395354755
     - jdk: openjdk9
-      before_install:
+      before_install: &fix_certs
         - rm "${JAVA_HOME}/lib/security/cacerts"
         - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
+    - jdk: openjdk10
+      before_install: *fix_certs
+    - jdk: openjdk11
+      before_install: *fix_certs
