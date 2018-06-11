@@ -1,25 +1,19 @@
 (ns hk.gavin.tabula-api.server-test
   (:require [clojure.core.async :as async]
             [clojure.test :refer :all]
-            [io.pedestal.test :refer :all]
-            [io.pedestal.http :as http]
+            [hk.gavin.tabula-api.api.version-test :as version-test]
             [hk.gavin.tabula-api.server :as server]
-            [hk.gavin.tabula-api.api.version-test :as version-test]))
+            [hk.gavin.tabula-api.test-util :as util]))
 
-(defn stop-all-servers
-  []
-  (http/stop @server/dev-serv)
-  (http/stop @server/prod-serv))
+(use-fixtures :each util/no-servers-running-fixture)
 
-(deftest run-prod-test
-  (stop-all-servers)
-  (let [c (async/go (server/run-prod))]
+(deftest test-run-dev
+  (server/run-dev)
+  (version-test/test-api-version)
+  (util/stop-dev-serv))
+
+(deftest test-server-main
+  (let [c (async/go (server/-main))]
     (async/alts!! [c (async/timeout 100)])
     (version-test/test-api-version)
-    (http/stop @server/prod-serv)))
-
-(deftest server-main-test
-  (stop-all-servers)
-  (server/-main)
-  (version-test/test-api-version)
-  (http/stop @server/dev-serv))
+    (util/stop-prod-serv)))

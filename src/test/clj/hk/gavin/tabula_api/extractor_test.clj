@@ -1,9 +1,9 @@
 (ns hk.gavin.tabula-api.extractor-test
   (:require [clojure.test :refer :all]
-            [clojure.java.io :as io]
             [hk.gavin.tabula-api.extractor :as extractor]
             [hk.gavin.tabula-api.test-util :as util])
-  (:import (org.apache.commons.io FileUtils)))
+  (:import (java.io File)
+           (org.apache.commons.io FileUtils)))
 
 (def sample-option-map
   {:area ["%0,0,100,50" "%0,50,100,100"] :format "CSV"
@@ -93,6 +93,6 @@
 (deftest test-extract-tables
   (let [multi-column-pdf (util/resource-file "multi-column.pdf")
         multi-column-csv (util/resource-file "multi-column.csv")
-        output-csv (java.io.File/createTempFile "extract-tables-test" ".csv")]
+        output-csv (File/createTempFile "extract-tables-test" ".csv")]
     (extractor/extract-tables sample-option-map multi-column-pdf output-csv)
     (is (FileUtils/contentEqualsIgnoreEOL multi-column-csv output-csv nil))))
