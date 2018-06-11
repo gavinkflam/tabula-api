@@ -33,4 +33,8 @@
                    ; Temporarily disable nvd failure until pedestal 0.5.4
                    :nvd {:fail-threshold 11}}}
   :main hk.gavin.tabula-api.server
-  :aot [hk.gavin.tabula-api.server])
+  :aot [hk.gavin.tabula-api.server]
+  ;; By default Leiningen will run a clean before creating jars to prevent
+  ;; undeclared AOT from leaking to downstream consumers.
+  ;; This disables that behaviour. Thus avoiding reports got deleted.
+  :auto-clean false)
