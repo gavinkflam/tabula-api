@@ -4,7 +4,8 @@
             [io.pedestal.http.ring-middlewares :as middlewares]
             [io.pedestal.interceptor.error :as error-int]
             [io.pedestal.log :as log]
-            [hk.gavin.tabula-api.extractor :as extractor]))
+            [hk.gavin.tabula-api.extractor :as extractor])
+  (:import (java.io File)))
 
 (defn log-pedestal-exception
   [ctx ex code]
@@ -67,7 +68,7 @@
   [request]
   (let [params (request->option-map request)
         pdf-file (get-in request [:params "file" :tempfile])
-        out-file (java.io.File/createTempFile "out-file" ".tmp")]
+        out-file (File/createTempFile "out-file" ".tmp")]
     (extractor/validate-pdf-file pdf-file)
     (extractor/extract-tables params pdf-file out-file)
     {:status 200 :body out-file}))

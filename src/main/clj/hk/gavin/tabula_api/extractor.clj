@@ -5,7 +5,8 @@
   tabula-java CLI module."
   (:require [clojure.core.match :refer [match]]
             [clojure.string :as string])
-  (:import (org.apache.commons.cli DefaultParser)
+  (:import (java.io File)
+           (org.apache.commons.cli DefaultParser)
            (org.apache.tika Tika)
            (technology.tabula CommandLineApp)))
 
@@ -70,7 +71,7 @@
 (defn validate-pdf-file
   "Validate if pdf-file exists and is really a PDF file."
   [pdf-file]
-  (or (instance? java.io.File pdf-file)
+  (or (instance? File pdf-file)
       (throw (IllegalArgumentException. "file is missing.")))
   (or (= (.detect @tika pdf-file) "application/pdf")
       (throw (IllegalArgumentException. "file is not a valid PDF file.")))
