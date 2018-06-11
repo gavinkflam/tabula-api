@@ -40,7 +40,7 @@
      [:area ["%0,0,100,50" true "%0,50,100,100" false]]
      ["--area" "%0,0,100,50" "--area" "%0,50,100,100"])))
 
-(deftest test-boolean-flag
+(deftest test-boolean-flag-arg
   (testing "Truthy values, should include the option"
     (test-option->string-vector [:guess true] ["--guess"])
     (test-option->string-vector [:guess "true"] ["--guess"])
@@ -54,6 +54,13 @@
     (test-option->string-vector [:guess ""] [])
     (test-option->string-vector [:guess "yolo"] [])
     (test-option->string-vector [:guess "TrUe"] [])))
+
+(deftest test-unsupported-options
+  (testing "Unsupported options, should discard the option"
+    (test-option->string-vector [:how-can-you-code-without-lisp? nil] [])
+    (test-option->string-vector [:lisp-the-best-of-all "true"] [])
+    (test-option->string-vector [:yagni false] [])
+    (test-option->string-vector [:choose-one ["red" "blue"]] [])))
 
 (deftest test-option-map->string-vector
   (is (=
