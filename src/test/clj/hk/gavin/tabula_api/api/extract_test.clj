@@ -49,7 +49,7 @@
     (test-extract-error-for :mime-type "text/html"
                             :expect-body "text/html is not supported."))
   (testing "File not supplied"
-    (test-extract-error-for :form (util/update-field base-form "file" "")
+    (test-extract-error-for :form (util/except-field base-form "file")
                             :expect-body "file is missing."))
   (testing "Non-PDF file"
     (test-extract-error-for :form (util/update-field
