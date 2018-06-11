@@ -26,7 +26,7 @@
 (defn string-arg-option->string-vector
   "Convert a string-arg option into a vector of CLI argument string."
   [[k v]]
-  (if (some? v) [(str "--" (name k)) v] []))
+  (if (string? v) [(str "--" (name k)) v] []))
 
 (defmulti option->string-vector
   "Convert an element of the option map into a vector of CLI argument string.
