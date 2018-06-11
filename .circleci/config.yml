@@ -12,24 +12,23 @@ jobs:
       # Restore m2 caches from previous build
       - restore_cache:
           key: v2-m2-{{ checksum "project.clj" }}
-      # Do testing, generate code coverage report, static analysis,
-      # check dependency vulnerabilities and compile uberjar
+      # Do testing, generate code coverage report, do static analysis,
+      # check dependency vulnerabilities, compile uberjar,
+      # upload coverage report and prepare artifact directories
       - run: "lein do \
-                  cloverage --codecov, \
+                  cloverage --codecov --no-html, \
                   cljfmt check, kibit, eastwood, bikeshed, \
-                  nvd check, uberjar"
+                  nvd check, uberjar && \
+              bash <(curl -s https://codecov.io/bash) && \
+              mkdir -p /tmp/artifacts/uberjar && \
+              cp \
+                  target/tabula-api-$(cat VERSION)-standalone.jar \
+                  /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar"
       # Store m2 caches for next build
       - save_cache:
           key: v2-m2-{{ checksum "project.clj" }}
           paths:
             - ~/.m2
-      # Upload code coverage report
-      - run: bash <(curl -s https://codecov.io/bash)
-      # Prepare artifact directories
-      - run: "mkdir -p /tmp/artifacts/uberjar && \
-              cp \
-                  target/tabula-api-$(cat VERSION)-standalone.jar \
-                  /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar"
       # Store the artifact directories
       - store_artifacts:
           path: /tmp/artifacts
