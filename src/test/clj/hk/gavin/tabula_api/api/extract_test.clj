@@ -34,28 +34,25 @@
   (testing "Extract as JSON"
     (test-extract-for "application/json" ".json")))
 
+(defn test-extract-error-for
+  [& {:keys [mime-type form expect-body]
+      :or {mime-type "text/csv" form base-form}}]
+  (let [resp (util/request {:uri "/api/extract"
+                            :method :post
+                            :accept mime-type
+                            :multipart form})]
+    (is (= (get resp :status) 400))
+    (is (= (get resp :body) expect-body))))
+
 (deftest test-extract-errors
   (testing "Unsupported mime type"
-    (let [resp (util/request {:uri "/api/extract"
-                              :method :post
-                              :accept "text/html"
-                              :multipart base-form})]
-      (is (= (get resp :status) 400))
-      (is (= (get resp :body) "text/html is not supported."))))
+    (test-extract-error-for :mime-type "text/html"
+                            :expect-body "text/html is not supported."))
   (testing "File not supplied"
-    (let [form (util/update-field base-form "file" "")
-          resp (util/request {:uri "/api/extract"
-                              :method :post
-                              :accept "text/csv"
-                              :multipart form})]
-      (is (= (get resp :status) 400))
-      (is (= (get resp :body) "file is missing."))))
+    (test-extract-error-for :form (util/update-field base-form "file" "")
+                            :expect-body "file is missing."))
   (testing "Non-PDF file"
-    (let [form (util/update-field
-                base-form "file" (util/resource-file "multi-column.csv"))
-          resp (util/request {:uri "/api/extract"
-                              :method :post
-                              :accept "text/csv"
-                              :multipart form})]
-      (is (= (get resp :status) 400))
-      (is (= (get resp :body) "file is not a valid PDF file.")))))
+    (test-extract-error-for :form (util/update-field
+                                   base-form "file"
+                                   (util/resource-file "multi-column.csv"))
+                            :expect-body "file is not a valid PDF file.")))
