@@ -11,14 +11,13 @@ jobs:
       - checkout
       - restore_cache:
           key: tabula-api-{{ checksum "project.clj" }}
-      - run: lein deps
+      - run: >
+          lein do \
+              cloverage --codecov --no-html, \
+              cljfmt check, kibit, eastwood, bikeshed, \
+              nvd check, uberjar
+      - run: bash <(curl -s https://codecov.io/bash)
       - save_cache:
           paths:
             - ~/.m2
           key: tabula-api-{{ checksum "project.clj" }}
-      - run: >
-          lein do \
-            test, cljfmt check, kibit, eastwood, bikeshed, nvd check, uberjar
-      - run: >
-          lein cloverage --codecov &&
-          bash <(curl -s https://codecov.io/bash)
