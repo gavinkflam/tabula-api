@@ -10,22 +10,26 @@
          props (doto (Properties.) (.load pom))]
      (.get props "version"))))
 
-; keywordize, java-map->map and env are derived from environ by James Reeves.
-; Distributed under Eclipse Public License.
+; string->env-key, java-env-map->env-map and conf are derived from environ
+; by James Reeves. Which is distributed under Eclipse Public License.
 ; https://github.com/weavejester/environ
 
-(defn- keywordize [s]
-  (-> s str/lower-case (str/replace "_" "-") (str/replace "." "-") keyword))
+(defn- string->env-key
+  "Convert environment and property key to lower case hyphenated keyword."
+  [k]
+  (-> k str/lower-case (str/replace "_" "-") (str/replace "." "-") keyword))
 
-(defn- java-map->map
+(defn- java-env-map->env-map
+  "Convert Java envorinment and property map to Clojure map."
   [m]
-  (->> m (map (fn [[k v]] [(keywordize k) v])) (into {})))
+  (->> m (map (fn [[k v]] [(string->env-key k) v])) (into {})))
 
-(def default-env
+(def default-conf
   {:host "localhost"
    :port "8080"})
 
-(defonce env
-  (merge default-env
-         (java-map->map (System/getenv))
-         (java-map->map (System/getProperties))))
+(def conf
+  (delay
+   (merge default-conf
+          (java-env-map->env-map (System/getenv))
+          (java-env-map->env-map (System/getProperties)))))
