@@ -1,4 +1,5 @@
 (ns hk.gavin.tabula-api.server
+  "Pedestal server and the entry-point."
   (:gen-class) ; for -main method in uberjar
   (:require [io.pedestal.http :as http]
             [hk.gavin.tabula-api.service :as service]))
@@ -23,11 +24,6 @@
        http/dev-interceptors
        http/create-server)))
 
-(defn run-prod
-  "Create the production server if not yet created, and start the server."
-  []
-  (http/start @prod-serv))
-
 (defn run-dev
   "Create the development server if not yet created, and start the server."
   []
@@ -36,4 +32,4 @@
 (defn -main
   "The entry-point for 'lein run' and uberjar."
   [& args]
-  (run-prod))
+  (http/start @prod-serv))

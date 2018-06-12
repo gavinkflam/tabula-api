@@ -1,9 +1,11 @@
 (ns hk.gavin.tabula-api.meta
+  "Metadata for the tabula-api project itself."
   (:require [clojure.java.io :as io]
             [clojure.string :as str])
   (:import (java.util Properties)))
 
 (def version-string
+  "Version string extracted lazily from POM properties."
   (delay
    (let [pom (-> "META-INF/maven/hk.gavin/tabula-api/pom.properties"
                  io/resource io/reader)
@@ -24,11 +26,15 @@
   [m]
   (->> m (map (fn [[k v]] [(string->env-key k) v])) (into {})))
 
-(def default-conf
+(def ^:private default-conf
+  "Default configuration map."
   {:host "localhost"
    :port "8080"})
 
 (def conf
+  "Configuration map.
+
+  Precedence: Defaults < Environment variables < Java system properties."
   (delay
    (merge default-conf
           (java-env-map->env-map (System/getenv))

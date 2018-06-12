@@ -12,6 +12,7 @@
 
 (def option-types
   "Mapping of option name to its option type.
+
   Option types include sting-arg, multi-string-arg and boolean-flag."
   {:area :multi-string-arg :columns :string-arg :format :string-arg
    :guess :boolean-flag :lattice :boolean-flag :pages :string-arg
@@ -19,17 +20,18 @@
 
 (def boolean-flag-values
   "Mapping of boolean flag string value to boolean type.
+
   true, \"true\" and \"True\" is considered truthy.
   false, \"false\" and \"False\" is considered falsy."
   {true true "true" true "True" true
    false false "false" false "False" false})
 
-(defn string-arg-option->string-vector
+(defn- string-arg-option->string-vector
   "Convert a string-arg option into a vector of CLI argument string."
   [[k v]]
   (if (string? v) [(str "--" (name k)) v] []))
 
-(defmulti option->string-vector
+(defmulti ^:private option->string-vector
   "Convert an element of the option map into a vector of CLI argument string.
 
   Ineffective and unsupported options were mapped to empty vector."
@@ -50,13 +52,14 @@
 (defmethod option->string-vector :unsupported [_]
   [])
 
-(defn option-map->string-vector
+(defn- option-map->string-vector
   "Convert a full option map into a vector of CLI argument string."
   [option-map]
   (mapcat option->string-vector option-map))
 
-(defn option-map->command-line
+(defn- option-map->command-line
   "Convert a full option map into a Apache commons CommanLine object.
+
   The arguments will be parsed against the options definition from tabula-java."
   [option-map]
   (let [parser (DefaultParser.)
@@ -64,7 +67,7 @@
         args (-> option-map option-map->string-vector into-array)]
     (.parse parser build-options args)))
 
-(def tika
+(def ^:private tika
   "A lazily created Apache Tika instance."
   (delay (Tika.)))
 
@@ -77,9 +80,8 @@
       (throw (IllegalArgumentException. "file is not a valid PDF file.")))
   true)
 
-(defn extract-tables
-  "Extract the tables from pdf-file against the options specified in option-map.
-  The results will be written into out-file."
+(defn extract-into
+  "Extract the tables from pdf-file against option-map into out-file."
   [option-map pdf-file out-file]
   (let [cmd-line (option-map->command-line option-map)
         cli-app (CommandLineApp. System/out cmd-line)]

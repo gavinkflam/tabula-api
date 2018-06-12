@@ -15,7 +15,7 @@
 
 (defn test-option->string-vector
   [option expect]
-  (is (= (extractor/option->string-vector option) expect)))
+  (is (= (#'extractor/option->string-vector option) expect)))
 
 (deftest test-string-arg
   (testing "Valid string arg"
@@ -64,11 +64,11 @@
 
 (deftest test-option-map->string-vector
   (is (=
-       (extractor/option-map->string-vector sample-option-map)
+       (#'extractor/option-map->string-vector sample-option-map)
        sample-option-map-expect-string-vector)))
 
 (deftest test-option-map->command-line
-  (let [cmd-line (extractor/option-map->command-line sample-option-map)]
+  (let [cmd-line (#'extractor/option-map->command-line sample-option-map)]
     (testing "Multi-string arg"
       (is (.hasOption cmd-line "area"))
       (let [areas (.getOptionValues cmd-line "area")]
@@ -97,9 +97,9 @@
            IllegalArgumentException #"file is missing."
            (extractor/validate-pdf-file nil))))))
 
-(deftest test-extract-tables
+(deftest test-extract-into
   (let [multi-column-pdf (util/resource-file "multi-column.pdf")
         multi-column-csv (util/resource-file "multi-column.csv")
-        output-csv (File/createTempFile "extract-tables-test" ".csv")]
-    (extractor/extract-tables sample-option-map multi-column-pdf output-csv)
+        output-csv (File/createTempFile "extract-into-test" ".csv")]
+    (extractor/extract-into sample-option-map multi-column-pdf output-csv)
     (is (FileUtils/contentEqualsIgnoreEOL multi-column-csv output-csv nil))))

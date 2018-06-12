@@ -21,7 +21,7 @@
                             :accept mime-type
                             :multipart base-form})
         expect-file (util/resource-file (str "multi-column" extension))
-        output-file (File/createTempFile "extract-tables-test" extension)]
+        output-file (File/createTempFile "extract-into-test" extension)]
     (is (= (get resp :status) 200))
     (is (= (get-in resp [:headers :content-type]) expect-mime-type))
     (FileUtils/writeStringToFile output-file (get resp :body) "UTF-8")
