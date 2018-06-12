@@ -24,6 +24,9 @@ services:
       LANGUAGE: en_US:en
       LC_ALL: en_US.UTF-8
       TZ: Asia/Hong_Kong
+      # Application configurations
+      HOST: 0.0.0.0
+      PORT: 8080
     volumes:
       - ${project_root}:/usr/src/app
       - ${project_root}/.dev/lein/profiles.clj:${home}/.lein/profiles.clj
