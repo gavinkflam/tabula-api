@@ -1,4 +1,5 @@
 (ns hk.gavin.tabula-api.extractor-test
+  "Tests for the extractor core."
   (:require [clojure.test :refer :all]
             [hk.gavin.tabula-api.extractor :as extractor]
             [hk.gavin.tabula-api.test-util :as util])
@@ -6,14 +7,17 @@
            (org.apache.commons.io FileUtils)))
 
 (def sample-option-map
+  "A sample option map for extracting tables from multi-column.pdf."
   {:area ["%0,0,100,50" "%0,50,100,100"] :format "CSV"
    :pages "1" :stream "true"})
 
 (def sample-option-map-expect-string-vector
+  "The expected string vector derived from the corresponding sample option map."
   ["--area" "%0,0,100,50" "--area" "%0,50,100,100" "--format" "CSV"
    "--pages" "1" "--stream"])
 
 (defn test-option->string-vector
+  "Test deriving string vector from option map."
   [option expect]
   (is (= (#'extractor/option->string-vector option) expect)))
 

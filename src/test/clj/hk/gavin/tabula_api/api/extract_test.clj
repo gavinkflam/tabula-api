@@ -1,4 +1,5 @@
 (ns hk.gavin.tabula-api.api.extract-test
+  "Tests for extraction API."
   (:require [clojure.test :refer :all]
             [hk.gavin.tabula-api.test-util :as util])
   (:import (org.apache.commons.io FileUtils)
@@ -7,6 +8,7 @@
 (use-fixtures :once util/dev-server-running-fixture)
 
 (def base-form
+  "Base form for extraction request."
   [{:name "area"   :content "%0,0,100,50"}
    {:name "area"   :content "%0,50,100,100"}
    {:name "pages"  :content "1"}
@@ -14,6 +16,7 @@
    {:name "file"   :content (util/resource-file "multi-column.pdf")}])
 
 (defn test-extract-for
+  "Test the extraction API with MIME type and expect file extension."
   [& {:keys [mime-type expect-mime-type extension]
       :or {expect-mime-type mime-type}}]
   (let [resp (util/request {:uri "/api/extract"
@@ -43,6 +46,7 @@
                       :extension ".json")))
 
 (defn test-extract-error-for
+  "Test the extraction API error with MIME type, form and expected body."
   [& {:keys [mime-type form expect-body]
       :or {mime-type "text/csv" form base-form}}]
   (let [resp (util/request {:uri "/api/extract"

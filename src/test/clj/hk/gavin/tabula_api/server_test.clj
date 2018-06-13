@@ -1,4 +1,5 @@
 (ns hk.gavin.tabula-api.server-test
+  "Tests for server lifecycle functions."
   (:require [clojure.core.async :as async]
             [clojure.test :refer :all]
             [hk.gavin.tabula-api.api.version-test :as version-test]
