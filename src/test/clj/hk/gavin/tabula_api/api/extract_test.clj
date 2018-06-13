@@ -30,7 +30,7 @@
     (FileUtils/writeStringToFile output-file (get resp :body) "UTF-8")
     (is (FileUtils/contentEqualsIgnoreEOL expect-file output-file nil))))
 
-(deftest text-extract
+(deftest extract-test
   (testing "Extract as CSV"
     (test-extract-for :mime-type "text/csv"
                       :extension ".csv"))
@@ -56,7 +56,7 @@
     (is (= (get resp :status) 400))
     (is (= (get resp :body) expect-body))))
 
-(deftest test-extract-errors
+(deftest extract-errors-test
   (testing "Unsupported mime type"
     (test-extract-error-for :mime-type "text/html"
                             :expect-body "text/html is not supported."))

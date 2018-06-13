@@ -13,5 +13,5 @@
     (is (= (get resp :status) 200))
     (is (= (get resp :body) @meta/version-string))))
 
-(deftest test-version
+(deftest version-test
   (test-api-version))

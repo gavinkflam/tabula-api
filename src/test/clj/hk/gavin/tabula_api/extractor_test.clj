@@ -21,13 +21,13 @@
   [option expect]
   (is (= (#'extractor/option->string-vector option) expect)))
 
-(deftest test-string-arg
+(deftest string-arg-test
   (testing "Valid string arg"
     (test-option->string-vector [:columns "10,20,30"] ["--columns" "10,20,30"]))
   (testing "Invalid string arg, should discard the option"
     (test-option->string-vector [:columns ["10,20,30", "40,50,60"]] [])))
 
-(deftest test-multi-string-arg
+(deftest multi-string-arg-test
   (testing "Single valid string value"
     (test-option->string-vector [:area "%0,0,100,50"] ["--area" "%0,0,100,50"]))
   (testing "Single invalid string value, should discard the option"
@@ -44,7 +44,7 @@
      [:area ["%0,0,100,50" true "%0,50,100,100" false]]
      ["--area" "%0,0,100,50" "--area" "%0,50,100,100"])))
 
-(deftest test-boolean-flag-arg
+(deftest boolean-flag-arg-test
   (testing "Truthy values, should include the option"
     (test-option->string-vector [:guess true] ["--guess"])
     (test-option->string-vector [:guess "true"] ["--guess"])
@@ -59,19 +59,19 @@
     (test-option->string-vector [:guess "yolo"] [])
     (test-option->string-vector [:guess "TrUe"] [])))
 
-(deftest test-unsupported-options
+(deftest unsupported-options-test
   (testing "Unsupported options, should discard the option"
     (test-option->string-vector [:how-can-you-code-without-lisp? nil] [])
     (test-option->string-vector [:lisp-the-best-of-all "true"] [])
     (test-option->string-vector [:yagni false] [])
     (test-option->string-vector [:choose-one ["red" "blue"]] [])))
 
-(deftest test-option-map->string-vector
+(deftest option-map->string-vector-test
   (is (=
        (#'extractor/option-map->string-vector sample-option-map)
        sample-option-map-expect-string-vector)))
 
-(deftest test-option-map->command-line
+(deftest option-map->command-line-test
   (let [cmd-line (#'extractor/option-map->command-line sample-option-map)]
     (testing "Multi-string arg"
       (is (.hasOption cmd-line "area"))
@@ -87,7 +87,7 @@
       (is (.hasOption cmd-line "stream"))
       (is (not (.hasOption cmd-line "guess"))))))
 
-(deftest test-validate-pdf-file
+(deftest validate-pdf-file-test
   (let [multi-column-pdf (util/resource-file "multi-column.pdf")
         multi-column-csv (util/resource-file "multi-column.csv")]
     (testing "PDF file should pass"
@@ -101,7 +101,7 @@
            IllegalArgumentException #"file is missing."
            (extractor/validate-pdf-file nil))))))
 
-(deftest test-extract-into
+(deftest extract-into-test
   (let [multi-column-pdf (util/resource-file "multi-column.pdf")
         multi-column-csv (util/resource-file "multi-column.csv")
         output-csv (File/createTempFile "extract-into-test" ".csv")]
