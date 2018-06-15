@@ -7,15 +7,18 @@
             [hk.gavin.tabula-api.api.extract :as api-extract]
             [hk.gavin.tabula-api.api.version :as api-version]))
 
-(def routes
-  "All routes of the Pedestal service."
+(defn derive-routes
+  "Derive the routes of the Pedestal service.
+
+  This is defined as a function thus routes could be reloaded for development."
+  []
   (route/expand-routes (set/union api-extract/routes
                                   api-version/routes)))
 
 (def service
   "The Pedestal service map."
   {:env                 :prod
-   ::http/routes        routes
+   ::http/routes        (derive-routes)
    ::http/resource-path "/public"
    ::http/type          :immutant
    ::http/host          (conf :host)

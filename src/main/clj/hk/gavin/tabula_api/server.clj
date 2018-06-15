@@ -9,13 +9,13 @@
 
 (defonce dev-serv
   (delay
-   (-> service/service ;; start with production configuration
+   (-> service/service
        (merge {:env :dev
                 ;; do not block thread that starts web server
                ::http/join? false
                 ;; Routes can be a function that resolve routes,
                 ;;  we can use this to set the routes to be reloadable
-               ::http/routes #(deref #'service/routes)
+               ::http/routes service/derive-routes
                 ;; all origins are allowed in dev mode
                ::http/allowed-origins {:creds true
                                        :allowed-origins (constantly true)}})
