@@ -18,5 +18,5 @@
    ::http/routes        routes
    ::http/resource-path "/public"
    ::http/type          :immutant
-   ::http/host          (@conf :host)
-   ::http/port          (@conf :port)})
+   ::http/host          (conf :host)
+   ::http/port          (conf :port)})

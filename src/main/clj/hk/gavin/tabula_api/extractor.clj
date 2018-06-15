@@ -68,15 +68,15 @@
     (.parse parser build-options args)))
 
 (def ^:private tika
-  "A lazily created Apache Tika instance."
-  (delay (Tika.)))
+  "Apache Tika instance."
+  (Tika.))
 
 (defn validate-pdf-file
   "Validate if pdf-file exists and is really a PDF file."
   [pdf-file]
   (or (instance? File pdf-file)
       (throw (IllegalArgumentException. "file is missing.")))
-  (or (= (.detect @tika pdf-file) "application/pdf")
+  (or (= (.detect tika pdf-file) "application/pdf")
       (throw (IllegalArgumentException. "file is not a valid PDF file.")))
   true)
 

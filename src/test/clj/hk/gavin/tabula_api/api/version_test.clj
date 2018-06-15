@@ -11,7 +11,7 @@
   []
   (let [resp (util/request {:uri "/api/version"})]
     (is (= (get resp :status) 200))
-    (is (= (get resp :body) @meta/version-string))))
+    (is (= (get resp :body) meta/version-string))))
 
 (deftest version-test
   (test-api-version))

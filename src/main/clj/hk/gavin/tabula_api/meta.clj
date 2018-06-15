@@ -5,12 +5,11 @@
   (:import (java.util Properties)))
 
 (def version-string
-  "Version string extracted lazily from POM properties."
-  (delay
-   (let [pom (-> "META-INF/maven/hk.gavin/tabula-api/pom.properties"
-                 io/resource io/reader)
-         props (doto (Properties.) (.load pom))]
-     (.get props "version"))))
+  "Version string extracted from POM properties."
+  (let [pom (-> "META-INF/maven/hk.gavin/tabula-api/pom.properties"
+                io/resource io/reader)
+        props (doto (Properties.) (.load pom))]
+    (.get props "version")))
 
 ; string->env-key, java-env-map->env-map and conf are derived from environ
 ; by James Reeves. Which is distributed under Eclipse Public License.
@@ -35,7 +34,6 @@
   "Configuration map.
 
   Precedence: Defaults < Environment variables < Java system properties."
-  (delay
-   (merge default-conf
-          (java-env-map->env-map (System/getenv))
-          (java-env-map->env-map (System/getProperties)))))
+  (merge default-conf
+         (java-env-map->env-map (System/getenv))
+         (java-env-map->env-map (System/getProperties))))
