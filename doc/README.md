@@ -20,7 +20,7 @@ See [`/doc/api`](api).
 You can configure each runtime with environment variables or Java system
 properties.
 
-See [`/doc/configurations.md`](configurations) for more details.
+See [`/doc/configurations.md`](configurations.md) for more details.
 
 ## Docker image
 
