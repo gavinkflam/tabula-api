@@ -14,7 +14,8 @@ jobs:
           key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - ~/tabula-api
-  test_and_static_analysis: *base
+  test_and_static_analysis:
+    <<: *base
     steps:
       # Restore repo caches from checkout_code job
       - restore_cache:
@@ -33,7 +34,8 @@ jobs:
           key: v2-m2-{{ checksum "project.clj" }}
           paths:
             - ~/.m2
-  build: *base
+  build:
+    <<: *base
     steps:
       # Restore repo caches from checkout_code job
       - restore_cache:
