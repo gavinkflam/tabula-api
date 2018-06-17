@@ -59,8 +59,8 @@ workflows:
     jobs:
       - checkout_code
       - test_and_static_analysis:
-        - requires:
-          - checkout_code
+          requires:
+            - checkout_code
       - build:
-        - requires:
+          requires:
           - test_and_static_analysis
