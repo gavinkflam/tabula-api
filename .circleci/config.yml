@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  checkout_code: &base
     working_directory: ~/tabula-api
     docker:
       - image: circleci/clojure:lein-2.8.1
@@ -9,27 +9,54 @@ jobs:
       JVM_OPTS: -Xmx3200m
     steps:
       - checkout
+      # Store repo caches for following jobs
+      - save_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/tabula-api
+  test_and_static_analysis: *base
+    steps:
+      # Restore repo caches from checkout_code job
+      - restore_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
       # Restore m2 caches from previous build
       - restore_cache:
           key: v2-m2-{{ checksum "project.clj" }}
       # Do testing, generate code coverage report, do static analysis,
-      # check dependency vulnerabilities, compile uberjar,
-      # upload coverage report and prepare artifact directories
+      # check dependency vulnerabilities and upload coverage report
       - run: "lein do \
                   cloverage --codecov --no-html, \
-                  cljfmt check, kibit, eastwood, bikeshed, \
-                  nvd check, uberjar && \
-              bash <(curl -s https://codecov.io/bash) && \
-              mkdir -p /tmp/artifacts/uberjar && \
-              cp \
-                  target/tabula-api-$(cat VERSION)-standalone.jar \
-                  /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar"
+                  cljfmt check, kibit, eastwood, bikeshed -v, nvd check && \
+              bash <(curl -s https://codecov.io/bash)"
       # Store m2 caches for next build
       - save_cache:
           key: v2-m2-{{ checksum "project.clj" }}
           paths:
             - ~/.m2
+  build: *base
+    steps:
+      # Restore repo caches from checkout_code job
+      - restore_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
+      # Restore m2 caches from previous build
+      - restore_cache:
+          key: v2-m2-{{ checksum "project.clj" }}
+      # Compile uberjar and prepare artifact directories
+      - run: "lein uberjar && \
+              mkdir -p /tmp/artifacts/uberjar && \
+              cp \
+                  target/tabula-api-$(cat VERSION)-standalone.jar \
+                  /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar"
       # Store the artifact directories
       - store_artifacts:
           path: /tmp/artifacts
           destination: artifacts
+workflows:
+  version: 2
+  test-build-and-release:
+    jobs:
+      - checkout_code
+      - test_and_static_analysis:
+        - requires: checkout_code
+      - build:
+        - requires: test_and_static_analysis
