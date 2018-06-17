@@ -11,9 +11,9 @@ An API server extracting tables from PDF files via [tabula-java][tabula-java].
 ## Quick examples with Docker and cURL
 
 ```bash
-docker run --rm -p8080:8080 gavinkflam/tabula-api:1.0.0
+docker run -p 8080:8080 -e HOST=0.0.0.0 gavinkflam/tabula-api:1.0.0
 curl -X POST -H 'Content-Type: multipart/form-data' \
-  -F 'file=@file.pdf' -F 'guess=true' -F 'pages=all' \
+  -F 'file=@my-pdf-file.pdf' -F 'guess=true' -F 'pages=all' \
   http://localhost:8080/api/extract
 ```
 

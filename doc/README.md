@@ -15,6 +15,13 @@ horizontal scaling.
 
 See [`/doc/api`](api).
 
+## Configurations
+
+You can configure each runtime with environment variables or Java system
+properties.
+
+See [`/doc/configurations.md`](configurations) for more details.
+
 ## Docker image
 
 The official Docker image is based on OpenJRE 8 and Alpine Linux 3.7.
