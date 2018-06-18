@@ -43,16 +43,32 @@ jobs:
       # Restore m2 caches from previous build
       - restore_cache:
           key: v2-m2-{{ checksum "project.clj" }}
-      # Compile uberjar and prepare artifact directories
+      # Compile uberjar and prepare artifact directory
       - run: "lein uberjar && \
-              mkdir -p /tmp/artifacts/uberjar && \
+              mkdir -p /tmp/artifacts && \
               cp \
                   target/tabula-api-$(cat VERSION)-standalone.jar \
-                  /tmp/artifacts/uberjar/tabula-api-$(cat VERSION)-standalone.jar"
+                  /tmp/artifacts/tabula-api-$(cat VERSION)-standalone.jar"
       # Store the artifact directories
       - store_artifacts:
           path: /tmp/artifacts
           destination: artifacts
+      # Store artifacts as cache for release step
+      - save_cache:
+          key: v2-artifacts-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - /tmp/artifacts
+  release:
+    working_directory: ~/tabula-api
+    docker:
+      - image: gavinkflam/ghr-alpine:0.10.0
+    steps:
+      # Restore artifacts from cache
+      - restore_cache:
+          key: v2-artifacts-{{ .Environment.CIRCLE_SHA1 }}
+      # Upload artifacts using ghr
+      - run: "ghr -t $GITHUB_TOKEN -u $GITHUB_USERNAME -r $GITHUB_REPO_NAME \
+                  `git describe --tags` /tmp/artifacts
 workflows:
   version: 2
   test-build-and-release:
@@ -63,4 +79,10 @@ workflows:
             - checkout_code
       - build:
           requires:
-          - test_and_static_analysis
+            - test_and_static_analysis
+      - release:
+          requires:
+            - build
+          filters:
+            tag:
+              only: /^v([0-9]+\.[0-9]+\.[0-9]+)/
