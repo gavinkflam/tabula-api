@@ -59,16 +59,22 @@ jobs:
           paths:
             - /tmp/artifacts
   release:
-    working_directory: ~/tabula-api
+    working_directory: /home/circleci/tabula-api
     docker:
       - image: gavinkflam/ghr-alpine:0.10.0
     steps:
+      # Update CA certificates and install git
+      - run: "apk add --update --no-cache git ca-certificates && \
+              update-ca-certificates"
+      # Restore repo caches from checkout_code job
+      - restore_cache:
+          key: v2-repo-{{ .Environment.CIRCLE_SHA1 }}
       # Restore artifacts from cache
       - restore_cache:
           key: v2-artifacts-{{ .Environment.CIRCLE_SHA1 }}
       # Upload artifacts using ghr
       - run: "ghr -t $GITHUB_TOKEN -u $GITHUB_USERNAME -r $GITHUB_REPO_NAME \
-                  `git describe --tags` /tmp/artifacts
+                  `git describe --tags` /tmp/artifacts"
 workflows:
   version: 2
   test-build-and-release:
@@ -84,5 +90,5 @@ workflows:
           requires:
             - build
           filters:
-            tag:
+            tags:
               only: /^v([0-9]+\.[0-9]+\.[0-9]+)/
