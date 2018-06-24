@@ -7,8 +7,8 @@
             :year 2018}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [commons-cli/commons-cli "1.4"]
-                 [io.pedestal/pedestal.service "0.5.3"]
-                 [io.pedestal/pedestal.immutant "0.5.3"]
+                 [io.pedestal/pedestal.service "0.5.4"]
+                 [io.pedestal/pedestal.immutant "0.5.4"]
                  [org.apache.tika/tika-core "1.18"]
                  [org.slf4j/slf4j-simple "1.7.25"]
                  [technology.tabula/tabula "1.0.2"]]
