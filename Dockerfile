@@ -3,18 +3,13 @@ LABEL maintainer="Gavin Lam <me@gavin.hk>"
 
 WORKDIR /usr/src/app
 
-# Fetch dependencies and cache the layer unless project metadata changed
-
-COPY project.clj VERSION ./
+# Fetch dependencies unless project metadata changed
+COPY project.clj .
 RUN lein deps
 
-# Compile uberjar and copy a version agonistic jar for copy in the later stage
+# Compile uberjar
 COPY . .
-RUN \
-  lein uberjar && \
-  cp \
-      target/tabula-api-$(cat VERSION)-standalone.jar \
-      target/tabula-api-standalone.jar
+RUN lein uberjar
 
 # =============================================================================
 FROM openjdk:8u151-jre-alpine3.7
@@ -23,7 +18,7 @@ LABEL maintainer="Gavin Lam <me@gavin.hk>"
 EXPOSE 8080
 
 COPY --from=builder \
-    /usr/src/app/target/tabula-api-standalone.jar \
+    /usr/src/app/target/tabula-api-1.1.0-SNAPSHOT-standalone.jar \
     /usr/src/app/tabula-api-standalone.jar
 
 CMD ["java", "-jar", "/usr/src/app/tabula-api-standalone.jar"]

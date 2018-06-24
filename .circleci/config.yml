@@ -47,8 +47,8 @@ jobs:
       - run: "lein uberjar && \
               mkdir -p /tmp/artifacts && \
               cp \
-                  target/tabula-api-$(cat VERSION)-standalone.jar \
-                  /tmp/artifacts/tabula-api-$(cat VERSION)-standalone.jar"
+                  target/tabula-api-1.1.0-SNAPSHOT-standalone.jar \
+                  /tmp/artifacts/tabula-api-1.1.0-SNAPSHOT-standalone.jar"
       # Store the artifact directories
       - store_artifacts:
           path: /tmp/artifacts
