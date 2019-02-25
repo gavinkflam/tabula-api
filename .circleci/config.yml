@@ -3,7 +3,7 @@ jobs:
   checkout_code: &base
     working_directory: ~/tabula-api
     docker:
-      - image: circleci/clojure:lein-2.8.1
+      - image: circleci/clojure:openjdk-11-lein-2.9.0
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
